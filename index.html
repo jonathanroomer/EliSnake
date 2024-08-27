@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ELI'S SNAKE</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="game-container">
+        <div id="game-area">
+            <h1 id="game-title">ELI'S SNAKE</h1>
+            <div id="game-info">
+                <div id="score">Score: 5</div>
+                <div id="message"></div>
+            </div>
+            <canvas id="game-board"></canvas>
+            <div id="instructions">
+                <h3>Instructions:</h3>
+                <ul>
+                    <li>Use arrow keys to move the snake</li>
+                    <li>Space: Pause/Resume</li>
+                    <li>Enter: Start game</li>
+                    <li>Backspace: Reset game</li>
+                    <li>Escape: Exit game</li>
+                </ul>
+            </div>
+        </div>
+        <div id="side-panel">
+            <canvas id="key-canvas"></canvas>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
