@@ -33,8 +33,17 @@ const foodTypes = {
     BANANA: { imageSrc: 'images/banana.png', points: 0, effect: 'fast' }
 };
 
+const snakeImages = {};
+const snakeImageSources = {
+    head: 'images/head.png',
+    body1: 'images/body3.png',
+    body2: 'images/body1.png',
+    body3: 'images/body2.png',
+    tail: 'images/tail.png'
+};
+
 function preloadImages() {
-    const imagePromises = Object.values(foodTypes).map(food => {
+    const foodImagePromises = Object.values(foodTypes).map(food => {
         return new Promise((resolve, reject) => {
             const img = new Image();
             img.onload = () => resolve(img);
@@ -44,7 +53,17 @@ function preloadImages() {
         });
     });
 
-    return Promise.all(imagePromises);
+    const snakeImagePromises = Object.entries(snakeImageSources).map(([key, src]) => {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => resolve(img);
+            img.onerror = reject;
+            img.src = src;
+            snakeImages[key] = img;
+        });
+    });
+
+    return Promise.all([...foodImagePromises, ...snakeImagePromises]);
 }
 
 function startGame() {
@@ -176,8 +195,36 @@ function clearCanvas() {
 
 function drawSnake() {
     snake.forEach((segment, index) => {
-        ctx.fillStyle = index === 0 ? 'darkblue' : 'blue';
-        ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize - 2, gridSize - 2);
+        let img;
+        if (index === 0) {
+            img = snakeImages.head;
+        } else if (index === snake.length - 1) {
+            img = snakeImages.tail;
+        } else {
+            img = snakeImages[`body${(index % 3) + 1}`];
+        }
+
+        // Calculate rotation based on direction
+        let rotation = 0;
+        if (index === 0) {
+            if (dx === 1) rotation = 0;
+            else if (dx === -1) rotation = Math.PI;
+            else if (dy === -1) rotation = -Math.PI / 2;
+            else if (dy === 1) rotation = Math.PI / 2;
+        } else {
+            const prev = snake[index - 1];
+            const curr = segment;
+            if (prev.x < curr.x) rotation = 0;
+            else if (prev.x > curr.x) rotation = Math.PI;
+            else if (prev.y < curr.y) rotation = Math.PI / 2;
+            else if (prev.y > curr.y) rotation = -Math.PI / 2;
+        }
+
+        ctx.save();
+        ctx.translate(segment.x * gridSize + gridSize / 2, segment.y * gridSize + gridSize / 2);
+        ctx.rotate(rotation);
+        ctx.drawImage(img, -gridSize / 2, -gridSize / 2, gridSize, gridSize);
+        ctx.restore();
     });
 }
 
